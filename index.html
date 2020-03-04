@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,121 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <style>
-        body {
-            font-size: 12px;
-            margin: 10px;
-            font-family: simsun;
-            background: #fff;
-        }
-
-        .video video {
-            display: inline-block;
-            /* width: 600px; */
-            width: 49%;
-            box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, .5);
-        }
-
-        .video canvas {
-            display: none;
-            box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, .5);
-        }
-
-        .txt {
-            display: inline-block;
-            margin-left:15px;
-        }
-
-        .txt p {
-            display: block;
-            line-height: 1;
-            margin: 0;
-        }
-    </style>
+    <title>video to string</title>
+    <link href="./style.css" rel="stylesheet"></link>
 </head>
-
 <body>
-    <div class="video">
-        <video src="./minions.mp4" controls></video>
-        <canvas></canvas>
-        <div class="txt">
-        </div>
-    </div>
+    <video src="./badapple.mp4" controls id="badapple"></video>
+    <script src="./videoToString.js"></script>
     <script>
         window.onload = function () {
-            var video = document.getElementsByTagName("video")[0],
-                txt = document.getElementsByClassName("txt")[0],
-                canvas = document.getElementsByTagName("canvas")[0],
-                ctx = canvas.getContext('2d'),tiemr=null;
-            var Vwidth = parseFloat(getComputedStyle(video).width);
-            var Vheight = parseFloat(getComputedStyle(video).height);
-            video.addEventListener('play', function () {
-                Vwidth = parseFloat(getComputedStyle(video).width);
-                Vheight = parseFloat(getComputedStyle(video).height);
-                canvas.width = Vwidth;
-                canvas.height = Vheight;
-                txt.style.width = Vwidth + "px";
-                txt.style.height = Vheight + "px";
-                tiemr = window.setInterval(function () {
-                    ctx.drawImage(video, 0, 0, Vwidth, Vheight);
-                    pxToStr(ctx);
-                    //当视频结束的时候去掉循环
-                    if (video.ended) {
-                        clearInterval(tiemr)
-                    }
-                }, 20);
-            }, false);
-            video.addEventListener('pause', function () {
-                clearInterval(tiemr)
-            }, false);
-
-            function pxToStr(ctx) {
-                const imgdata = ctx.getImageData(0, 0, Vwidth, Vheight);
-                var imgDataArr = imgdata.data;
-                var imgDataWidth = imgdata.width;
-                var imgDataHeight = imgdata.height;
-                var html = '';
-                for (h = 0; h < imgDataHeight; h += 12) {
-                    var p = '<p>';
-                    for (w = 0; w < imgDataWidth; w += 6) {
-                        var index = (w + imgDataWidth * h) * 4;
-                        var r = imgDataArr[index + 0];
-                        var g = imgDataArr[index + 1];
-                        var b = imgDataArr[index + 2];
-                        var gray = getGray(r, g, b);
-                        p += toText(gray);
-                    }
-                    p += '</p>';
-                    html += p;
-                }
-                txt.innerHTML = html;
-            }
-            // 根据灰度生成相应字符
-            function toText(g) {
-                if (g <= 30) {
-                    return '8';
-                } else if (g > 30 && g <= 60) {
-                    return '&';
-                } else if (g > 60 && g <= 120) {
-                    return '$';
-                } else if (g > 120 && g <= 150) {
-                    return '*';
-                } else if (g > 150 && g <= 180) {
-                    return 'o';
-                } else if (g > 180 && g <= 210) {
-                    return '!';
-                } else if (g > 210 && g <= 240) {
-                    return ';';
-                } else {
-                    return '.';
-                }
-            }
-
-            // 根据rgb值计算灰度加权平均法
-            function getGray(r, g, b) {
-                return 0.299 * r + 0.578 * g + 0.114 * b;
-            }
+            var videoToString = new VideoToString("badapple");
         }
     </script>
 </body>
